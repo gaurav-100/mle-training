@@ -99,7 +99,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_folder",
         "-f",
-        default="models/",
+        default="artifacts/",
         help="Model folder",
     )
     parser.add_argument(
