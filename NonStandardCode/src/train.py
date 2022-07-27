@@ -1,4 +1,5 @@
 import argparse
+import logging
 import pickle
 
 import pandas as pd
@@ -15,13 +16,13 @@ from sklearn.tree import DecisionTreeRegressor
 class TrainModel:
     def __init__(self, args):
         self.strat_test_set = pd.read_csv(
-            args.input_dataset + "strat_test_set"
+            args.input_dataset + "strat_test_set.csv"
         )
         self.housing_prepared = pd.read_csv(
-            args.input_dataset + "housing_prepared"
+            args.input_dataset + "housing_prepared.csv"
         )
         self.housing_labels = pd.read_csv(
-            args.input_dataset + "housing_labels"
+            args.input_dataset + "housing_labels.csv"
         )
         self.model_output_folder = args.model_output
         self.lin_reg = LinearRegression()
@@ -67,7 +68,8 @@ class TrainModel:
         )
 
         with open(
-            self.model_output_folder + "linear_model", "wb"
+            self.model_output_folder + "linear_model" + ".pickle",
+            "wb",
         ) as files:
             pickle.dump(self.lin_reg, files)
 
@@ -78,7 +80,10 @@ class TrainModel:
         )
 
         with open(
-            self.model_output_folder + "decision_tree_model", "wb"
+            self.model_output_folder
+            + "decision_tree_model"
+            + ".pickle",
+            "wb",
         ) as files:
             pickle.dump(self.tree_reg, files)
 
@@ -91,7 +96,9 @@ class TrainModel:
         final_model = self.grid_search.best_estimator_
 
         with open(
-            self.model_output_folder + "grid_cv_random_forest",
+            self.model_output_folder
+            + "grid_cv_random_forest"
+            + ".pickle",
             "wb",
         ) as files:
             pickle.dump(final_model, files)
@@ -103,7 +110,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_output",
         "-o",
-        default="models/",
+        default="artifacts/",
         help="Model output folder",
     )
     parser.add_argument(
@@ -115,6 +122,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     train_model = TrainModel(args)
+    logging.info("Training linear model ...")
     train_model.linear_model()
+    logging.info("Training decision tree model ...")
     train_model.decision_tree_model()
+    logging.info("Grid search ...")
     train_model.grid_search_model()

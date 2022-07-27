@@ -1,4 +1,5 @@
 import argparse
+import logging
 import pickle
 
 import numpy as np
@@ -18,30 +19,33 @@ class CalculateScore:
         self.metric = args.metric
         self.imputer = SimpleImputer(strategy="median")
         self.strat_test_set = pd.read_csv(
-            args.input_dataset + "strat_test_set.csv"
+            args.dataset + "strat_test_set.csv"
         )
         self.housing_prepared = pd.read_csv(
-            args.input_dataset + "housing_prepared.csv"
+            args.dataset + "housing_prepared.csv"
         )
         self.housing_labels = pd.read_csv(
-            args.input_dataset + "housing_labels.csv"
+            args.dataset + "housing_labels.csv"
         )
         self.strat_train_set = pd.read_csv(
             args.dataset + "strat_train_set.csv"
         )
 
     def load_model(self):
-        model_path = " ".join(
-            [self.model_folder, self.model + "_model"]
+        logging.info("Loading model ...")
+        model_path = "".join(
+            [self.model_folder, self.model + "_model" + ".pickle"]
         )
 
-        loaded_model = pickle.load(model_path)
+        with open(model_path, "rb") as f:
+            loaded_model = pickle.load(f)
         return loaded_model
 
     def calculate_prediction(self):
 
+        logging.info("Predicting ...")
         model = self.load_model()
-        if self.model != "grid_cv_random_forest":
+        if self.model != "grid_cv_random_forest.pickle":
             prediction = model.predict(self.housing_prepared)
             label = self.housing_labels
         else:
@@ -81,6 +85,7 @@ class CalculateScore:
         return label, prediction
 
     def calculate_score(self):
+        logging.info("Calculating score ...")
         label, prediction = self.calculate_prediction()
         if self.metric == "mae":
             score = mean_absolute_error(label, prediction)
@@ -105,7 +110,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset",
         "-i",
-        default="dataset/",
+        default="datasets/",
         help="Input dataset",
     )
     parser.add_argument(
@@ -119,5 +124,10 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    calculate_score = CalculateScore()
-    calculate_score.calculate_score()
+    calculate_score = CalculateScore(args)
+    score = calculate_score.calculate_score()
+    print(
+        "{} model {} score: {}".format(
+            args.model, args.metric.upper(), score
+        )
+    )

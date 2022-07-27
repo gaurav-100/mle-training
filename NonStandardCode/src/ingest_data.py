@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import tarfile
 
@@ -27,14 +28,17 @@ class IngestData:
         self.imputer = SimpleImputer(strategy="median")
 
     def fetch_housing_data(self):
+        logging.info("Fetching housing data.")
         os.makedirs(self.output_path, exist_ok=True)
         tgz_path = os.path.join(self.output_path, "housing.tgz")
-        urllib.request.urlretrieve(self.output_path, tgz_path)
+        urllib.request.urlretrieve(HOUSING_URL, tgz_path)
         housing_tgz = tarfile.open(tgz_path)
         housing_tgz.extractall(path=self.output_path)
         housing_tgz.close()
 
     def load_housing_data(self):
+        logging.info("Loading housing data.")
+        self.fetch_housing_data()
         csv_path = os.path.join(self.output_path, "housing.csv")
         return pd.read_csv(csv_path)
 
@@ -42,7 +46,8 @@ class IngestData:
         return data["income_cat"].value_counts() / len(data)
 
     def prepare_dataset(self):
-        housing = self.load_housing_data
+        logging.info("Preparing datasets.")
+        housing = self.load_housing_data()
 
         housing["income_cat"] = pd.cut(
             housing["median_income"],
@@ -59,7 +64,7 @@ class IngestData:
             strat_train_set = housing.loc[train_index]
             strat_test_set = housing.loc[test_index]
 
-        train_set, test_set = train_test_split(
+        _, test_set = train_test_split(
             housing, test_size=0.2, random_state=42
         )
 
@@ -158,6 +163,7 @@ class IngestData:
         housing_labels.to_csv(
             "datasets/housing_labels.csv", index=False
         )
+        logging.info("Dataset prepared.")
 
         return (
             strat_train_set,
