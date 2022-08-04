@@ -5,10 +5,7 @@ import pickle
 import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import (
-    mean_absolute_error,
-    mean_squared_error,
-)
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 
 class CalculateScore:
@@ -19,16 +16,13 @@ class CalculateScore:
         self.metric = args.metric
         self.imputer = SimpleImputer(strategy="median")
         self.strat_test_set = pd.read_csv(
-            args.dataset + "strat_test_set.csv"
+            args.dataset + "test_data.csv"
         )
         self.housing_prepared = pd.read_csv(
             args.dataset + "housing_prepared.csv"
         )
         self.housing_labels = pd.read_csv(
             args.dataset + "housing_labels.csv"
-        )
-        self.strat_train_set = pd.read_csv(
-            args.dataset + "strat_train_set.csv"
         )
 
     def load_model(self):

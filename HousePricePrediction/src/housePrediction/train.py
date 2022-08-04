@@ -6,18 +6,12 @@ import pandas as pd
 from scipy.stats import randint
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import (
-    GridSearchCV,
-    RandomizedSearchCV,
-)
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.tree import DecisionTreeRegressor
 
 
 class TrainModel:
     def __init__(self, args):
-        self.strat_test_set = pd.read_csv(
-            args.input_dataset + "strat_test_set.csv"
-        )
         self.housing_prepared = pd.read_csv(
             args.input_dataset + "housing_prepared.csv"
         )
