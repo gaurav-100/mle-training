@@ -5,24 +5,31 @@ import pickle
 import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_squared_error,
+)
 
 
 class CalculateScore:
-    def __init__(self, args):
-        self.model_folder = args.model_folder
-        self.dataset = args.dataset
-        self.model = args.model
-        self.metric = args.metric
+    def __init__(
+        self,
+        model_folder="artifacts/",
+        dataset="datasets/",
+        model="linear",
+        metric="mae",
+    ):
+        self.model_folder = model_folder
+        self.dataset = dataset
+        self.model = model
+        self.metric = metric
         self.imputer = SimpleImputer(strategy="median")
-        self.strat_test_set = pd.read_csv(
-            args.dataset + "test_data.csv"
-        )
-        self.housing_prepared = pd.read_csv(
-            args.dataset + "housing_prepared.csv"
+        self.strat_test_set = np.load(dataset + "test_data.npy")
+        self.housing_prepared = np.load(
+            dataset + "housing_prepared.npy"
         )
         self.housing_labels = pd.read_csv(
-            args.dataset + "housing_labels.csv"
+            dataset + "housing_labels.csv"
         )
 
     def load_model(self):
@@ -81,13 +88,13 @@ class CalculateScore:
     def calculate_score(self):
         logging.info("Calculating score ...")
         label, prediction = self.calculate_prediction()
-        if self.metric == "mae":
-            score = mean_absolute_error(label, prediction)
-        elif self.metric == "mse":
-            score = mean_squared_error(label, prediction)
-        elif self.metric == "rmse":
-            score = mean_squared_error(label, prediction)
-            score = np.sqrt(score)
+        score = {
+            "mae": mean_absolute_error(label, prediction),
+            "mse": mean_squared_error(label, prediction),
+            "rmse": np.sqrt(
+                mean_squared_error(label, prediction)
+            ),
+        }
 
         return score
 
@@ -118,7 +125,9 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    calculate_score = CalculateScore(args)
+    calculate_score = CalculateScore(
+        args.model_folder, args.dataset.args.model, args.metric
+    )
     score = calculate_score.calculate_score()
     print(
         "{} model {} score: {}".format(

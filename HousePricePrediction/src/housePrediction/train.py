@@ -2,6 +2,7 @@ import argparse
 import logging
 import pickle
 
+import numpy as np
 import pandas as pd
 from scipy.stats import randint
 from sklearn.ensemble import RandomForestRegressor
@@ -11,14 +12,15 @@ from sklearn.tree import DecisionTreeRegressor
 
 
 class TrainModel:
-    def __init__(self, args):
-        self.housing_prepared = pd.read_csv(
-            args.input_dataset + "housing_prepared.csv"
-        )
-        self.housing_labels = pd.read_csv(
-            args.input_dataset + "housing_labels.csv"
-        )
-        self.model_output_folder = args.model_output
+    def __init__(
+        self,
+        housing_prepared,
+        housing_labels,
+        model_output_folder,
+    ):
+        self.housing_prepared = housing_prepared
+        self.housing_labels = housing_labels
+        self.model_output_folder = model_output_folder
         self.lin_reg = LinearRegression()
         self.tree_reg = DecisionTreeRegressor(random_state=42)
         self.forest_reg = RandomForestRegressor(random_state=42)
@@ -57,9 +59,7 @@ class TrainModel:
 
     def linear_model(self):
 
-        self.lin_reg.fit(
-            self.housing_prepared, self.housing_labels
-        )
+        self.lin_reg.fit(self.housing_prepared, self.housing_labels)
 
         with open(
             self.model_output_folder + "linear_model" + ".pickle",
@@ -67,35 +67,33 @@ class TrainModel:
         ) as files:
             pickle.dump(self.lin_reg, files)
 
+        return self.lin_reg
+
     def decision_tree_model(self):
 
-        self.tree_reg.fit(
-            self.housing_prepared, self.housing_labels
-        )
+        self.tree_reg.fit(self.housing_prepared, self.housing_labels)
 
         with open(
-            self.model_output_folder
-            + "decision_tree_model"
-            + ".pickle",
+            self.model_output_folder + "decision_tree_model" + ".pickle",
             "wb",
         ) as files:
             pickle.dump(self.tree_reg, files)
 
+        return self.tree_reg
+
     def grid_search_model(self):
 
-        self.grid_search.fit(
-            self.housing_prepared, self.housing_labels
-        )
+        self.grid_search.fit(self.housing_prepared, self.housing_labels)
 
         final_model = self.grid_search.best_estimator_
 
         with open(
-            self.model_output_folder
-            + "grid_cv_random_forest"
-            + ".pickle",
+            self.model_output_folder + "grid_cv_random_forest" + ".pickle",
             "wb",
         ) as files:
             pickle.dump(final_model, files)
+
+        return self.final_model
 
 
 if __name__ == "__main__":
@@ -115,7 +113,11 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    train_model = TrainModel(args)
+    housing_prepared = np.load(args.input_dataset + "housing_prepared.npy")
+    housing_labels = pd.read_csv(args.input_dataset + "housing_labels.csv")
+    model_output_folder = args.model_output
+
+    train_model = TrainModel(housing_prepared, housing_labels, model_output_folder)
     logging.info("Training linear model ...")
     train_model.linear_model()
     logging.info("Training decision tree model ...")
