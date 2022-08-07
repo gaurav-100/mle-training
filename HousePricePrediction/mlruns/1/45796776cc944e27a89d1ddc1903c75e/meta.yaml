@@ -1,0 +1,15 @@
+artifact_uri: mlruns/1/45796776cc944e27a89d1ddc1903c75e/artifacts
+end_time: 1659902155063
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: 45796776cc944e27a89d1ddc1903c75e
+run_uuid: 45796776cc944e27a89d1ddc1903c75e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1659902154983
+status: 4
+tags: []
+user_id: gaurav
