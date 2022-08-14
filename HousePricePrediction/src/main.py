@@ -53,7 +53,7 @@ if __name__ == "__main__":
         "--hostname",
         "-ip",
         help="IP to connect to",
-        default="127.0.0.1",
+        default="localhost",
     )
     parser.add_argument("--portname", "-p", help="port number", default="5000")
     parser.add_argument(
@@ -68,6 +68,8 @@ if __name__ == "__main__":
     # Connect to uri
     remote_server_uri = f"http://{args.hostname}:{args.portname}"
     mlflow.set_tracking_uri(remote_server_uri)
+
+    print("Tracking %s ..." % mlflow.get_tracking_uri())
 
     # Experiment name
     exp_name = args.experiment_name
