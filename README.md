@@ -15,4 +15,11 @@ Code for Assignments
     - 'i' denotes **interactive**
     - 't' denotes allocates sudo terminal
 
-4. 
+4. Build docker image using,
+
+    `DOCKER_BUILDKIT=1 docker build -t <tigerID>/<project_name>:<tag> <source>`
+
+5. Run docker image in bash,
+
+    `docker run --network='host' -it <doker details> bin/bash`
+

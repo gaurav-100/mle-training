@@ -4,3 +4,4 @@
 **.pickle
 **.log
 **datasets
+**/mlruns/**
