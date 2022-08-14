@@ -18,3 +18,10 @@ The following techniques have been used:
 
 ## To excute the script
 python < scriptname.py >
+
+# To create conda env file
+`conda env export > <yml file>`
+
+# To build using docker
+`DOCKER_BUILDKIT=1 docker build -t gauravtiger/housepriceprediction:base /home/gaurav/projects/mle-training/`
+
