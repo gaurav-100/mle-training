@@ -2,16 +2,16 @@ import argparse
 import logging
 import os
 
-import mlflow
 import numpy as np
 import pandas as pd
-from housePrediction.helper import fetch_housing_data
-from housePrediction.transformer import CombinedAttributesAdder
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+from housePrediction.helper import fetch_housing_data
+from housePrediction.transformer import CombinedAttributesAdder
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
 HOUSING_PATH = os.path.join("datasets", "housing")
@@ -24,16 +24,9 @@ class IngestData:
         self.stratified_shuffle = StratifiedShuffleSplit(
             n_splits=1, test_size=0.2, random_state=42
         )
-        mlflow.log_params({"n_splits": 1, "test_size": 0.2})
 
         self.num_imputer = SimpleImputer(strategy="median")
         self.cat_imputer = SimpleImputer(strategy="most_frequent")
-        mlflow.log_params(
-            {
-                "num_imputer": "median",
-                "cat_imputer": "most_frequent",
-            }
-        )
 
         self.combined_attr_adder = CombinedAttributesAdder()
 
