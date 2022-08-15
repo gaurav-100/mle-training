@@ -2,24 +2,22 @@
 
 Code for Assignments
 
-# Docker installation
+The housing data can be downloaded from https://raw.githubusercontent.com/ageron/handson-ml/master/. The script has codes to download the data. We have modelled the median house value on given housing data. 
 
-1. Docker used in root
-    `sudo -i`
+The following techniques have been used: 
 
-2. In WSL to start docker,
-    `sudo service docker start`
-
-3. `docker run -dit debian`
-    - 'd' denotes **detach**, means it can run in background
-    - 'i' denotes **interactive**
-    - 't' denotes allocates sudo terminal
-
-4. Build docker image using,
-
-    `DOCKER_BUILDKIT=1 docker build -t <tigerID>/<project_name>:<tag> <source>`
-
-5. Run docker image in bash,
+ - Linear regression
+ - Decision Tree
+ - Random Forest
 
     `docker run --network='host' -it <doker details> bin/bash`
+
+## To excute the script
+python < scriptname.py >
+
+# To create conda env file
+`conda env export > <yml file>`
+
+# To build using docker
+`DOCKER_BUILDKIT=1 docker build -t gauravtiger/housepriceprediction:base /home/gaurav/projects/mle-training/`
 

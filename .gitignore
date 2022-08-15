@@ -3,5 +3,4 @@
 **tmp.py
 **.pickle
 **.log
-**datasets
-**/mlruns/**
+**.pyc

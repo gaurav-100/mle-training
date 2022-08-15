@@ -5,10 +5,7 @@ import pickle
 import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import (
-    mean_absolute_error,
-    mean_squared_error,
-)
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 
 class CalculateScore:
@@ -25,18 +22,12 @@ class CalculateScore:
         self.metric = metric
         self.imputer = SimpleImputer(strategy="median")
         self.strat_test_set = np.load(dataset + "test_data.npy")
-        self.housing_prepared = np.load(
-            dataset + "housing_prepared.npy"
-        )
-        self.housing_labels = pd.read_csv(
-            dataset + "housing_labels.csv"
-        )
+        self.housing_prepared = np.load(dataset + "housing_prepared.npy")
+        self.housing_labels = pd.read_csv(dataset + "housing_labels.csv")
 
     def load_model(self):
         logging.info("Loading model ...")
-        model_path = "".join(
-            [self.model_folder, self.model + "_model" + ".pickle"]
-        )
+        model_path = "".join([self.model_folder, self.model + "_model" + ".pickle"])
 
         with open(model_path, "rb") as f:
             loaded_model = pickle.load(f)
@@ -50,12 +41,8 @@ class CalculateScore:
             prediction = model.predict(self.housing_prepared)
             label = self.housing_labels
         else:
-            X_test = self.strat_test_set.drop(
-                "median_house_value", axis=1
-            )
-            label = self.strat_test_set[
-                "median_house_value"
-            ].copy()
+            X_test = self.strat_test_set.drop("median_house_value", axis=1)
+            label = self.strat_test_set["median_house_value"].copy()
 
             X_test_num = X_test.drop("ocean_proximity", axis=1)
             X_test_prepared = self.imputer.transform(X_test_num)
@@ -65,22 +52,17 @@ class CalculateScore:
                 index=X_test.index,
             )
             X_test_prepared["rooms_per_household"] = (
-                X_test_prepared["total_rooms"]
-                / X_test_prepared["households"]
+                X_test_prepared["total_rooms"] / X_test_prepared["households"]
             )
             X_test_prepared["bedrooms_per_room"] = (
-                X_test_prepared["total_bedrooms"]
-                / X_test_prepared["total_rooms"]
+                X_test_prepared["total_bedrooms"] / X_test_prepared["total_rooms"]
             )
             X_test_prepared["population_per_household"] = (
-                X_test_prepared["population"]
-                / X_test_prepared["households"]
+                X_test_prepared["population"] / X_test_prepared["households"]
             )
 
             X_test_cat = X_test[["ocean_proximity"]]
-            X_test_prepared = X_test_prepared.join(
-                pd.get_dummies(X_test_cat, drop_first=True)
-            )
+            X_test_prepared = X_test_prepared.join(pd.get_dummies(X_test_cat, drop_first=True))
             prediction = model.predict(X_test_prepared)
 
         return label, prediction
@@ -91,9 +73,7 @@ class CalculateScore:
         score = {
             "mae": mean_absolute_error(label, prediction),
             "mse": mean_squared_error(label, prediction),
-            "rmse": np.sqrt(
-                mean_squared_error(label, prediction)
-            ),
+            "rmse": np.sqrt(mean_squared_error(label, prediction)),
         }
 
         return score
@@ -114,9 +94,7 @@ if __name__ == "__main__":
         default="datasets/",
         help="Input dataset",
     )
-    parser.add_argument(
-        "--model", "-m", default="linear", help="Model"
-    )
+    parser.add_argument("--model", "-m", default="linear", help="Model")
     parser.add_argument(
         "--metric",
         "-s",
@@ -125,12 +103,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    calculate_score = CalculateScore(
-        args.model_folder, args.dataset.args.model, args.metric
-    )
+    calculate_score = CalculateScore(args.model_folder, args.dataset.args.model, args.metric)
     score = calculate_score.calculate_score()
-    print(
-        "{} model {} score: {}".format(
-            args.model, args.metric.upper(), score
-        )
-    )
+    print("{} model {} score: {}".format(args.model, args.metric.upper(), score))

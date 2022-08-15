@@ -2,7 +2,6 @@ import argparse
 import logging
 import os
 
-import mlflow
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
@@ -25,16 +24,9 @@ class IngestData:
         self.stratified_shuffle = StratifiedShuffleSplit(
             n_splits=1, test_size=0.2, random_state=42
         )
-        mlflow.log_params({"n_splits": 1, "test_size": 0.2})
 
         self.num_imputer = SimpleImputer(strategy="median")
         self.cat_imputer = SimpleImputer(strategy="most_frequent")
-        mlflow.log_params(
-            {
-                "num_imputer": "median",
-                "cat_imputer": "most_frequent",
-            }
-        )
 
         self.combined_attr_adder = CombinedAttributesAdder()
 
