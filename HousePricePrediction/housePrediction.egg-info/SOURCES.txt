@@ -1,0 +1,9 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+housePrediction.egg-info/PKG-INFO
+housePrediction.egg-info/SOURCES.txt
+housePrediction.egg-info/dependency_links.txt
+housePrediction.egg-info/top_level.txt
